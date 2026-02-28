@@ -13,7 +13,6 @@ PESSOA {
 
 CLIENTE {
     string cpf PK
-    int rank FK
     int cnh
     int pontos
     string status
