@@ -7,16 +7,24 @@ PESSOA {
     string cpf PK
     string nome
     int data_nasc
+    string telefone
+    string email
 }
 
 CLIENTE {
     string cpf PK
     int rank FK
+    int cnh
+    int pontos
+    string status
 }
 
 FUNCIONARIO {
     int matricula PK
     string cpf FK
+    string cargo
+    float salario
+    date data_contrato
 }
 
 VEICULO {
@@ -24,25 +32,23 @@ VEICULO {
     int id_modelo FK
     float valor_diaria
     int id_garagem FK
-    string status
+    string condicao
     int revisao
 }
 
 MODELOS {
     int id_modelo PK
     string nome
+    int capacidade
+    string categoria
+    string tipo
 }
 
 GARAGEM {
     int id_garagem PK
     string localizacao
-    int vagas
-}
-
-RANKING {
-    int id_ranking PK
-    int desconto
-    float requisito
+    int vagas_disponiveis
+    int vagas_totais
 }
 
 PAGAMENTO {
