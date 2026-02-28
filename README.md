@@ -1,7 +1,7 @@
 # alucar
 Projeto universidade São Lucas para banco de dados e programação orientada a objetos
-
-erDiagram
+```mermaid
+    erDiagram
 
 PESSOA {
     string cpf PK
@@ -60,7 +60,6 @@ PEDIDO {
     date data_inicio
     date data_fim
 }
-
 PESSOA ||--|| CLIENTE : "é"
 PESSOA ||--|| FUNCIONARIO : "é"
 
@@ -73,3 +72,7 @@ VEICULO ||--o{ PEDIDO : aluga
 
 RANKING ||--o{ CLIENTE : possui
 PAGAMENTO ||--|| PEDIDO : autoriza
+
+```
+
+
