@@ -76,7 +76,6 @@ CLIENTE ||--o{ PEDIDO : realiza
 FUNCIONARIO ||--o{ PEDIDO : provem
 VEICULO ||--o{ PEDIDO : aluga
 
-RANKING ||--o{ CLIENTE : possui
 PAGAMENTO ||--|| PEDIDO : autoriza
 
 ```
