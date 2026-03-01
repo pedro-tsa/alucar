@@ -45,9 +45,11 @@ CREATE TABLE veiculo(
     placa VARCHAR(10) PRIMARY KEY,
     valor_diaria NUMERIC(5,2),
     garagem_id INT,
+	modelo_id INT,
     condicao VARCHAR(10),
     revisao DATE,
-    FOREIGN KEY(garagem_id) REFERENCES garagem(id_garagem)
+    FOREIGN KEY(garagem_id) REFERENCES garagem(id_garagem),
+	FOREIGN KEY(modelo_id) REFERENCES veiculo(id_modelo)
 );
 
 CREATE TABLE pagamento(
