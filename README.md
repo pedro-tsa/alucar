@@ -30,6 +30,7 @@ FUNCIONARIO {
 VEICULO {
     string placa PK
     int id_modelo FK
+    string modelo_carro FK
     float valor_diaria
     int id_garagem FK
     string condicao
