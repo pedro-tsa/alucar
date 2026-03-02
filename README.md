@@ -14,7 +14,7 @@ PESSOA {
 }
 
 CLIENTE {
-    string cpf PK
+    string cpf FK
     int cnh
     int pontos
 }
