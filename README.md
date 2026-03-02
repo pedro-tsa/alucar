@@ -17,6 +17,7 @@ CLIENTE {
     string cpf FK
     int cnh
     int pontos
+    string rank
 }
 
 FUNCIONARIO {
