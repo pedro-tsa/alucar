@@ -9,13 +9,14 @@ PESSOA {
     int data_nasc
     string telefone
     string email
+    date data_cadastro
+    string status
 }
 
 CLIENTE {
     string cpf PK
     int cnh
     int pontos
-    string status
 }
 
 FUNCIONARIO {
@@ -32,7 +33,7 @@ VEICULO {
     float valor_diaria
     int id_garagem FK
     string condicao
-    int revisao
+    date revisao
 }
 
 MODELOS {
