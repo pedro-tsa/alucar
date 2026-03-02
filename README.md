@@ -33,7 +33,7 @@ VEICULO {
     int id_modelo FK
     string modelo_carro FK
     float valor_diaria
-    int id_garagem FK
+    int garagem_id FK
     string condicao
     date revisao
 }
