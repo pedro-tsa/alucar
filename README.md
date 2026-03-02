@@ -38,7 +38,7 @@ VEICULO {
 }
 
 MODELOS {
-    int id_modelo PK
+    int modelo_id PK
     string nome
     int capacidade
     string categoria
