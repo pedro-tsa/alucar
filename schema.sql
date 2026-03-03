@@ -2,8 +2,10 @@ CREATE TABLE pessoa(
     cpf VARCHAR(11) PRIMARY KEY,
     nome VARCHAR(100),
     data_nasc DATE,
+	sexo INT,
     telefone VARCHAR(20),
-    email VARCHAR(100)
+    email VARCHAR(100),
+	status VARCHAR(10)
 );
 
 CREATE TABLE cliente(
