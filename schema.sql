@@ -1,75 +1,122 @@
-CREATE TABLE pessoa(
+CREATE TABLE pessoa (
     cpf VARCHAR(11) PRIMARY KEY,
-    nome VARCHAR(100),
+    nome VARCHAR(100) NOT NULL,
     data_nasc DATE,
-	sexo INT,
     telefone VARCHAR(20),
     email VARCHAR(100),
-	status VARCHAR(10)
+    data_cadastro DATE DEFAULT CURRENT_DATE,
+    status VARCHAR(20),
+    endereco VARCHAR(200)
 );
 
-CREATE TABLE cliente(
+CREATE TABLE cliente (
     cpf VARCHAR(11) PRIMARY KEY,
+    cnh VARCHAR(20),
     pontos INT DEFAULT 0,
-    status_cliente VARCHAR(10),
-	cnh VARCHAR(11),
+    rank VARCHAR(20),
 
-
-    FOREIGN KEY(cpf) REFERENCES pessoa(cpf)
+    CONSTRAINT fk_cliente_pessoa
+        FOREIGN KEY (cpf) REFERENCES pessoa(cpf)
 );
 
-CREATE TABLE funcionario(
+CREATE TABLE funcionario (
     matricula SERIAL PRIMARY KEY,
-    cpf VARCHAR(11),
-    cargo VARCHAR(20),
+    cpf VARCHAR(11) UNIQUE,
+    cargo VARCHAR(50),
     salario NUMERIC(10,2),
     data_contrato DATE,
 
-    FOREIGN KEY(cpf) REFERENCES pessoa(cpf)
+    CONSTRAINT fk_funcionario_pessoa
+        FOREIGN KEY (cpf) REFERENCES pessoa(cpf)
 );
 
-CREATE TABLE garagem(
+CREATE TABLE motorista (
+    id SERIAL PRIMARY KEY,
+    cpf VARCHAR(11) UNIQUE,
+    cnh VARCHAR(20),
+
+    CONSTRAINT fk_motorista_pessoa
+        FOREIGN KEY (cpf) REFERENCES pessoa(cpf)
+);
+
+CREATE TABLE garagem (
     id_garagem SERIAL PRIMARY KEY,
-    localizacao VARCHAR(100),
+    localizacao VARCHAR(150),
     vagas_disponiveis INT,
     vagas_totais INT
 );
 
-CREATE TABLE modelos(
-    id_modelo SERIAL PRIMARY KEY,
-    nome VARCHAR(20),
+CREATE TABLE modelos (
+    modelo_id SERIAL PRIMARY KEY,
+    nome VARCHAR(100),
     capacidade INT,
-    categoria VARCHAR(10),
-    tipo VARCHAR(10)
+    categoria VARCHAR(50),
+    tipo VARCHAR(50)
 );
-/* 
-CREATE TABLE veiculo(
+
+CREATE TABLE veiculo (
     placa VARCHAR(10) PRIMARY KEY,
-    valor_diaria NUMERIC(5,2),
+    modelo_id INT,
+    valor_diaria NUMERIC(10,2),
     garagem_id INT,
-	modelo_id INT,
-    condicao VARCHAR(10),
+    condicao VARCHAR(50),
     revisao DATE,
-    FOREIGN KEY(garagem_id) REFERENCES garagem(id_garagem),
-	FOREIGN KEY(modelo_id) REFERENCES veiculo(id_modelo)
+
+    CONSTRAINT fk_veiculo_modelo
+        FOREIGN KEY (modelo_id) REFERENCES modelos(modelo_id),
+
+    CONSTRAINT fk_veiculo_garagem
+        FOREIGN KEY (garagem_id) REFERENCES garagem(id_garagem)
 );
 
-CREATE TABLE pagamento(
-    nf INT PRIMARY KEY,
+CREATE TABLE pagamento (
+    nf SERIAL PRIMARY KEY,
     valor NUMERIC(10,2),
-    forma VARCHAR(10)
+    forma VARCHAR(50),
+    pagador VARCHAR(11),
+
+    CONSTRAINT fk_pagador
+        FOREIGN KEY (pagador) REFERENCES pessoa(cpf)
 );
 
-CREATE TABLE pedido(
+CREATE TABLE pedido (
     id_pedido SERIAL PRIMARY KEY,
-    matric_func INT,
+    mat_func INT,
     cpf_cliente VARCHAR(11),
     placa_veiculo VARCHAR(10),
     pagamento_id INT,
     data_inicio DATE,
-    date_final DATE,
-    CONSTRAINT fk_cliente FOREIGN KEY(cpf_cliente) REFERENCES cliente(cpf),
-    CONSTRAINT fk_veiculo FOREIGN KEY(placa_veiculo) REFERENCES veiculo(placa),
-    CONSTRAINT fk_pagamento FOREIGN KEY(pagamento_id) REFERENCES pagamento(nf)
+    data_fim DATE,
+
+    CONSTRAINT fk_pedido_funcionario
+        FOREIGN KEY (mat_func) REFERENCES funcionario(matricula),
+
+    CONSTRAINT fk_pedido_cliente
+        FOREIGN KEY (cpf_cliente) REFERENCES cliente(cpf),
+
+    CONSTRAINT fk_pedido_veiculo
+        FOREIGN KEY (placa_veiculo) REFERENCES veiculo(placa),
+
+    CONSTRAINT fk_pedido_pagamento
+        FOREIGN KEY (pagamento_id) REFERENCES pagamento(nf)
 );
-*/
+
+CREATE TABLE contrato (
+    id SERIAL PRIMARY KEY,
+    data_inicio DATE,
+    data_fim DATE,
+    multa NUMERIC(10,2),
+    valor NUMERIC(10,2),
+    motorista_id INT,
+    funcionario_id INT,
+    pagamento_id INT,
+
+    CONSTRAINT fk_contrato_motorista
+        FOREIGN KEY (motorista_id) REFERENCES motorista(id),
+
+    CONSTRAINT fk_contrato_funcionario
+        FOREIGN KEY (funcionario_id) REFERENCES funcionario(matricula),
+
+    CONSTRAINT fk_contrato_pagamento
+        FOREIGN KEY (pagamento_id) REFERENCES pagamento(nf)
+);
