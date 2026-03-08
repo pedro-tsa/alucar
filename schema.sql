@@ -103,13 +103,13 @@ CREATE TABLE pedido (
 
 CREATE TABLE contrato (
     id SERIAL PRIMARY KEY,
-    data_inicio DATE,
-    data_fim DATE,
-    multa NUMERIC(10,2),
-    valor NUMERIC(10,2),
-    motorista_id INT,
-    funcionario_id INT,
+    motorista_id INT NOT NULL,
+    funcionario_id INT NOT NULL,
     pagamento_id INT,
+    data_inicio DATE NOT NULL,
+    data_fim DATE NOT NULL,
+    valor_mensal NUMERIC(10,2),
+    multa NUMERIC(10,2),
 
     CONSTRAINT fk_contrato_motorista
         FOREIGN KEY (motorista_id) REFERENCES motorista(id),
@@ -118,5 +118,8 @@ CREATE TABLE contrato (
         FOREIGN KEY (funcionario_id) REFERENCES funcionario(matricula),
 
     CONSTRAINT fk_contrato_pagamento
-        FOREIGN KEY (pagamento_id) REFERENCES pagamento(nf)
+        FOREIGN KEY (pagamento_id) REFERENCES pagamento(nf),
+
+    CONSTRAINT contrato_duracao_minima
+        CHECK (data_fim >= data_inicio + INTERVAL '1 month')
 );
