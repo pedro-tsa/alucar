@@ -1,125 +1,135 @@
-CREATE TABLE pessoa (
-    cpf VARCHAR(11) PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    data_nasc DATE,
-    telefone VARCHAR(20),
-    email VARCHAR(100),
-    data_cadastro DATE DEFAULT CURRENT_DATE,
-    status VARCHAR(20),
-    endereco VARCHAR(200)
-);
+CREATE TABLE IF NOT EXISTS pessoa(
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(20) NOT NULL,
+	cpf VARCHAR(11) UNIQUE NOT NULL,
+	sobrenome VARCHAR(20) NOT NULL,
+	data_nascimento DATE NOT NULL,
+	telefone VARCHAR(20) NOT NULL,
+	email VARCHAR(20),
+	data_cadastro DATE NOT NULL,
+	status VARCHAR(10) NOT NULL,
+	endereco VARCHAR(100),
+	cnh VARCHAR(11) UNIQUE NOT NULL
+)
 
-CREATE TABLE cliente (
-    cpf VARCHAR(11) PRIMARY KEY,
-    cnh VARCHAR(20),
-    pontos INT DEFAULT 0,
-    rank VARCHAR(20),
+CREATE TABLE IF NOT EXISTS garagem(
+	id SERIAL PRIMARY KEY,
+	endereco VARCHAR(100) NOT NULL,
+	vagas_disponiveis INT NOT NULL,
+	vagas_totais INT NOT NULL
+)
 
-    CONSTRAINT fk_cliente_pessoa
-        FOREIGN KEY (cpf) REFERENCES pessoa(cpf)
-);
+CREATE TABLE IF NOT EXISTS modelos(
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(20) NOT NULL,
+	capacidade INT,
+	categoria VARCHAR(10) 
+)
 
-CREATE TABLE funcionario (
-    matricula SERIAL PRIMARY KEY,
-    cpf VARCHAR(11) UNIQUE,
-    cargo VARCHAR(50),
-    salario NUMERIC(10,2),
-    data_contrato DATE,
+CREATE TABLE IF NOT EXISTS pagamento(
+	id SERIAL PRIMARY KEY,
+	nota_fiscal INT NOT NULL,
+	valor NUMERIC(10,2) NOT NULL,
+	forma VARCHAR(10) NOT NULL,
+	pagador VARCHAR(11) NOT NULL,
+	status VARCHAR(10) NOT NULL,
+	data_pagamento DATE NOT NULL,
 
-    CONSTRAINT fk_funcionario_pessoa
-        FOREIGN KEY (cpf) REFERENCES pessoa(cpf)
-);
+	CONSTRAINT fk_pagador
+	FOREIGN KEY (pagador) REFERENCES pessoa(cpf)
+)
 
-CREATE TABLE motorista (
-    id SERIAL PRIMARY KEY,
-    cpf VARCHAR(11) UNIQUE,
-    cnh VARCHAR(20),
+CREATE TABLE IF NOT EXISTS motorista_fixo(
+	id SERIAL PRIMARY KEY,
+	cpf VARCHAR(11) NOT NULL,
+	cnh VARCHAR(11) NOT NULL,
 
-    CONSTRAINT fk_motorista_pessoa
-        FOREIGN KEY (cpf) REFERENCES pessoa(cpf)
-);
+	CONSTRAINT fk_cpf
+	FOREIGN KEY(cpf) REFERENCES pessoa(cpf),
 
-CREATE TABLE garagem (
-    id_garagem SERIAL PRIMARY KEY,
-    localizacao VARCHAR(150),
-    vagas_disponiveis INT,
-    vagas_totais INT
-);
+	CONSTRAINT fk_cnh
+	FOREIGN KEY(cnh) REFERENCES pessoa(cnh)
+)
 
-CREATE TABLE modelos (
-    modelo_id SERIAL PRIMARY KEY,
-    nome VARCHAR(100),
-    capacidade INT,
-    categoria VARCHAR(50),
-    tipo VARCHAR(50)
-);
+CREATE TABLE IF NOT EXISTS funcionario(
+	id SERIAL PRIMARY KEY,
+	cpf VARCHAR(11) NOT NULL,
+	cargo VARCHAR(20) NOT NULL,
+	salario NUMERIC(10,2) NOT NULL,
+	data_contrato DATE NOT NULL,
 
-CREATE TABLE veiculo (
-    placa VARCHAR(10) PRIMARY KEY,
-    modelo_id INT,
-    valor_diaria NUMERIC(10,2),
-    garagem_id INT,
-    condicao VARCHAR(50),
-    revisao DATE,
+	CONSTRAINT fk_cpf
+	FOREIGN KEY (cpf) REFERENCES pessoa(cpf)
+)
 
-    CONSTRAINT fk_veiculo_modelo
-        FOREIGN KEY (modelo_id) REFERENCES modelos(modelo_id),
+CREATE TABLE IF NOT EXISTS cliente(
+	id SERIAL PRIMARY KEY,
+	cnh VARCHAR(11) NOT NULL,
+	cpf VARCHAR(11) NOT NULL,
+	pontos INT,
 
-    CONSTRAINT fk_veiculo_garagem
-        FOREIGN KEY (garagem_id) REFERENCES garagem(id_garagem)
-);
+	CONSTRAINT fk_cnh
+	FOREIGN KEY(cnh) REFERENCES pessoa(cnh),
 
-CREATE TABLE pagamento (
-    nf SERIAL PRIMARY KEY,
-    valor NUMERIC(10,2),
-    forma VARCHAR(50),
-    pagador VARCHAR(11),
+	CONSTRAINT fk_cpf
+	FOREIGN KEY(cpf) REFERENCES pessoa(cpf)
+)
 
-    CONSTRAINT fk_pagador
-        FOREIGN KEY (pagador) REFERENCES pessoa(cpf)
-);
+CREATE TABLE IF NOT EXISTS veiculo(
+	id SERIAL PRIMARY KEY,
+	placa VARCHAR(10) UNIQUE NOT NULL,
+	modelo_carro VARCHAR(20) NOT NULL,
+	valor_diaria NUMERIC(6,2) NOT NULL,
+	valor_contrato NUMERIC(10,2),
+	garagem_id INT NOT NULL,
+	condicao VARCHAR(50),
+	revisao DATE,
+	motorista_id INT NOT NULL,
 
-CREATE TABLE pedido (
-    id_pedido SERIAL PRIMARY KEY,
-    mat_func INT,
-    cpf_cliente VARCHAR(11),
-    placa_veiculo VARCHAR(10),
-    pagamento_id INT,
-    data_inicio DATE,
-    data_fim DATE,
+	CONSTRAINT fk_garagem
+	FOREIGN KEY (garagem_id) REFERENCES garagem(id),
 
-    CONSTRAINT fk_pedido_funcionario
-        FOREIGN KEY (mat_func) REFERENCES funcionario(matricula),
+	CONSTRAINT fk_motorista
+	FOREIGN KEY (motorista_id) REFERENCES motorista_fixo(id)
+)
 
-    CONSTRAINT fk_pedido_cliente
-        FOREIGN KEY (cpf_cliente) REFERENCES cliente(cpf),
+CREATE TABLE IF NOT EXISTS contrato_fixo(
+	id SERIAL PRIMARY KEY,
+	data_inicio DATE NOT NULL,
+	data_fim DATE NOT NULL,
+	multa_cancelamento NUMERIC(6,2),
+	valor NUMERIC(6,2) NOT NULL,
+	motorista_id INT NOT NULL,
+	pagamento_id INT NOT NULL,
 
-    CONSTRAINT fk_pedido_veiculo
-        FOREIGN KEY (placa_veiculo) REFERENCES veiculo(placa),
+	CONSTRAINT fk_motorista
+	FOREIGN KEY (motorista_id) REFERENCES motorista_fixo(id),
 
-    CONSTRAINT fk_pedido_pagamento
-        FOREIGN KEY (pagamento_id) REFERENCES pagamento(nf)
-);
+	CONSTRAINT fk_pagamento
+	FOREIGN KEY (pagamento_id) REFERENCES pagamento(id)
+)
 
-CREATE TABLE contrato (
-    id SERIAL PRIMARY KEY,
-    motorista_id INT NOT NULL,
-    funcionario_id INT NOT NULL,
-    pagamento_id INT,
-    data_inicio DATE NOT NULL,
-    data_fim DATE NOT NULL,
-    valor_mensal NUMERIC(10,2),
-    multa NUMERIC(10,2),
+CREATE TABLE IF NOT EXISTS pedido(
+	id SERIAL PRIMARY KEY,
+	funcionario_id INT,
+	cliente_id INT NOT NULL,
+	veiculo_id INT NOT NULL,
+	pagamento_id INT NOT NULL,
+	data_inicio DATE NOT NULL,
+	data_fim DATE NOT NULL,
 
-    CONSTRAINT fk_contrato_motorista
-        FOREIGN KEY (motorista_id) REFERENCES motorista(id),
+	
+	CONSTRAINT fk_funcionario FOREIGN KEY (funcionario_id) REFERENCES funcionario(id),
+	CONSTRAINT fk_cliente FOREIGN KEY (cliente_id) REFERENCES cliente(id),
+	CONSTRAINT fk_veiculo FOREIGN KEY (veiculo_id) REFERENCES veiculo(id),
+	CONSTRAINT fk_pagamento FOREIGN KEY (pagamento_id) REFERENCES pagamento(id)
+)
 
-    CONSTRAINT fk_contrato_funcionario
-        FOREIGN KEY (funcionario_id) REFERENCES funcionario(matricula),
+CREATE TABLE login(
+	id SERIAL PRIMARY KEY,
+	pessoa_id INT NOT NULL,
+	login VARCHAR(50) UNIQUE NOT NULL,
+	senha VARCHAR(200) NOT NULL,
 
-    CONSTRAINT fk_contrato_pagamento
-        FOREIGN KEY (pagamento_id) REFERENCES pagamento(nf),
-
-    CONSTRAINT contrato_duracao_minima
-        CHECK (data_fim >= data_inicio + INTERVAL '1 month')
-);
+	CONSTRAINT fk_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id)
+)
