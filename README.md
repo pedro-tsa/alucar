@@ -9,7 +9,7 @@ erDiagram
     PESSOA {
         int id PK
         string nome
-        string cpf UNIQUE
+        string cpf
         string sobrenome
         date data_nascimento
         string telefone
@@ -17,7 +17,7 @@ erDiagram
         date data_cadastro
         string status
         string endereco
-        string cnh UNIQUE
+        string cnh
     }
 
     GARAGEM {
@@ -39,20 +39,20 @@ erDiagram
         int nota_fiscal
         decimal valor
         string forma
-        int pagador FK
+        int pagador
         string status
         date data_pagamento
     }
 
     MOTORISTA_FIXO {
         int id PK
-        int pessoa_id FK UNIQUE
+        int pessoa_id
         int pontos
     }
 
     FUNCIONARIO {
         int id PK
-        int pessoa_id FK UNIQUE
+        int pessoa_id
         string cargo
         decimal salario
         date data_contrato
@@ -60,20 +60,20 @@ erDiagram
 
     CLIENTE {
         int id PK
-        int pessoa_id FK UNIQUE
+        int pessoa_id
         int pontos
     }
 
     VEICULO {
         int id PK
-        string placa UNIQUE
-        int modelo FK
+        string placa
+        int modelo
         decimal valor_diaria
         decimal valor_contrato
-        int garagem_id FK
+        int garagem_id
         string condicao
         date revisao
-        int motorista_id FK
+        int motorista_id
     }
 
     CONTRATO_FIXO {
@@ -82,45 +82,43 @@ erDiagram
         date data_fim
         decimal multa_cancelamento
         decimal valor
-        int motorista_id FK
-        int pagamento_id FK
+        int motorista_id
+        int pagamento_id
     }
 
     PEDIDO {
         int id PK
-        int funcionario_id FK
-        int cliente_id FK
-        int veiculo_id FK
-        int pagamento_id FK
+        int funcionario_id
+        int cliente_id
+        int veiculo_id
+        int pagamento_id
         date data_inicio
         date data_fim
     }
 
     LOGIN {
         int id PK
-        int pessoa_id FK
-        string login UNIQUE
+        int pessoa_id
+        string login
         string senha
     }
 
-    %% RELACIONAMENTOS
+    PESSOA ||--o{ PAGAMENTO : pagador
+    PESSOA ||--|| MOTORISTA_FIXO : pessoa_id
+    PESSOA ||--|| FUNCIONARIO : pessoa_id
+    PESSOA ||--|| CLIENTE : pessoa_id
+    PESSOA ||--o{ LOGIN : pessoa_id
 
-    PESSOA ||--o{ PAGAMENTO : "id -> pagador"
-    PESSOA ||--|| MOTORISTA_FIXO : "id -> pessoa_id"
-    PESSOA ||--|| FUNCIONARIO : "id -> pessoa_id"
-    PESSOA ||--|| CLIENTE : "id -> pessoa_id"
-    PESSOA ||--o{ LOGIN : "id -> pessoa_id"
+    GARAGEM ||--o{ VEICULO : garagem_id
+    MODELOS ||--o{ VEICULO : modelo
 
-    GARAGEM ||--o{ VEICULO : "id -> garagem_id"
-    MODELOS ||--o{ VEICULO : "id -> modelo"
+    MOTORISTA_FIXO ||--o{ VEICULO : motorista_id
+    MOTORISTA_FIXO ||--o{ CONTRATO_FIXO : motorista_id
 
-    MOTORISTA_FIXO ||--o{ VEICULO : "id -> motorista_id"
-    MOTORISTA_FIXO ||--o{ CONTRATO_FIXO : "id -> motorista_id"
+    PAGAMENTO ||--o{ CONTRATO_FIXO : pagamento_id
+    PAGAMENTO ||--o{ PEDIDO : pagamento_id
 
-    PAGAMENTO ||--o{ CONTRATO_FIXO : "id -> pagamento_id"
-    PAGAMENTO ||--o{ PEDIDO : "id -> pagamento_id"
-
-    FUNCIONARIO ||--o{ PEDIDO : "id -> funcionario_id"
-    CLIENTE ||--o{ PEDIDO : "id -> cliente_id"
-    VEICULO ||--o{ PEDIDO : "id -> veiculo_id"
+    FUNCIONARIO ||--o{ PEDIDO : funcionario_id
+    CLIENTE ||--o{ PEDIDO : cliente_id
+    VEICULO ||--o{ PEDIDO : veiculo_id
 ```
