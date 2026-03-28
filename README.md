@@ -6,100 +6,121 @@ config:
   theme: neo-dark
 ---
 erDiagram
-	direction TB
-	CLIENTE {
-		string cpf FK
-		int cnh
-		int pontos
-		string rank
-	}
+    PESSOA {
+        int id PK
+        string nome
+        string cpf UNIQUE
+        string sobrenome
+        date data_nascimento
+        string telefone
+        string email
+        date data_cadastro
+        string status
+        string endereco
+        string cnh UNIQUE
+    }
 
-	FUNCIONARIO {
-		int matricula PK
-		string cpf FK
-		string cargo
-		float salario
-		date data_contrato
-	}
+    GARAGEM {
+        int id PK
+        string endereco
+        int vagas_disponiveis
+        int vagas_totais
+    }
 
-	VEICULO {
-		string placa PK
-		string modelo_carro FK
-		float valor_diaria
-		int garagem_id FK
-		string condicao
-		date revisao
-	}
+    MODELOS {
+        int id PK
+        string nome
+        int capacidade
+        string categoria
+    }
 
-	MODELOS {
-		int modelo_id PK
-		string nome
-		int capacidade
-		string categoria
-		string tipo
-	}
+    PAGAMENTO {
+        int id PK
+        int nota_fiscal
+        decimal valor
+        string forma
+        int pagador FK
+        string status
+        date data_pagamento
+    }
 
-	GARAGEM {
-		int id_garagem PK
-		string localizacao
-		int vagas_disponiveis
-		int vagas_totais
-	}
+    MOTORISTA_FIXO {
+        int id PK
+        int pessoa_id FK UNIQUE
+        int pontos
+    }
 
-	PEDIDO {
-		int id_pedido PK
-		int mat_func FK
-		string cpf_cliente FK
-		string placa_veiculo FK
-		int pagamento_id FK
-		date data_inicio
-		date data_fim
-	}
+    FUNCIONARIO {
+        int id PK
+        int pessoa_id FK UNIQUE
+        string cargo
+        decimal salario
+        date data_contrato
+    }
 
-	MOTORISTA {
-		serial id PK
-		string cpf FK
-		string cnh
-	}
+    CLIENTE {
+        int id PK
+        int pessoa_id FK UNIQUE
+        int pontos
+    }
 
-	PESSOA {
-		string cpf PK
-		string nome
-		int data_nasc
-		string telefone
-		string email
-		date data_cadastro
-		string status
-		string endereco
-	}
+    VEICULO {
+        int id PK
+        string placa UNIQUE
+        int modelo FK
+        decimal valor_diaria
+        decimal valor_contrato
+        int garagem_id FK
+        string condicao
+        date revisao
+        int motorista_id FK
+    }
 
-	Contrato {
-		serial id PK
-		date data_inicio
-		date data_fim
-		double multa
-		double valor
-		string motorista FK
-		string funcionario FK
-		int pagamento_id FK
-	}
+    CONTRATO_FIXO {
+        int id PK
+        date data_inicio
+        date data_fim
+        decimal multa_cancelamento
+        decimal valor
+        int motorista_id FK
+        int pagamento_id FK
+    }
 
-	PAGAMENTO {
-		int nf PK
-		float valor
-		string forma
-		string pagador FK
-	}
+    PEDIDO {
+        int id PK
+        int funcionario_id FK
+        int cliente_id FK
+        int veiculo_id FK
+        int pagamento_id FK
+        date data_inicio
+        date data_fim
+    }
 
-	CLIENTE ||--o{ PEDIDO : faz
-	FUNCIONARIO ||--o{ PEDIDO : provem
-	VEICULO ||--o{ PEDIDO : é
-	GARAGEM ||--o{ VEICULO : contem
-	MODELOS ||--o{ VEICULO : tem
-	PESSOA }|--|{ MOTORISTA : é
-	PAGAMENTO }|--|{ PEDIDO : autoriza
-	MOTORISTA }|--|{ Contrato : assina
-	FUNCIONARIO }|--|{ Contrato : assina
-	PESSOA }|--|{ CLIENTE : é
-	PESSOA }|--|{ FUNCIONARIO : é
+    LOGIN {
+        int id PK
+        int pessoa_id FK
+        string login UNIQUE
+        string senha
+    }
+
+    %% RELACIONAMENTOS
+
+    PESSOA ||--o{ PAGAMENTO : "id -> pagador"
+    PESSOA ||--|| MOTORISTA_FIXO : "id -> pessoa_id"
+    PESSOA ||--|| FUNCIONARIO : "id -> pessoa_id"
+    PESSOA ||--|| CLIENTE : "id -> pessoa_id"
+    PESSOA ||--o{ LOGIN : "id -> pessoa_id"
+
+    GARAGEM ||--o{ VEICULO : "id -> garagem_id"
+    MODELOS ||--o{ VEICULO : "id -> modelo"
+
+    MOTORISTA_FIXO ||--o{ VEICULO : "id -> motorista_id"
+    MOTORISTA_FIXO ||--o{ CONTRATO_FIXO : "id -> motorista_id"
+
+    PAGAMENTO ||--o{ CONTRATO_FIXO : "id -> pagamento_id"
+    PAGAMENTO ||--o{ PEDIDO : "id -> pagamento_id"
+
+    FUNCIONARIO ||--o{ PEDIDO : "id -> funcionario_id"
+    CLIENTE ||--o{ PEDIDO : "id -> cliente_id"
+    VEICULO ||--o{ PEDIDO : "id -> veiculo_id"
 ```
