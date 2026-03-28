@@ -31,54 +31,47 @@ CREATE TABLE IF NOT EXISTS pagamento(
 	nota_fiscal INT NOT NULL,
 	valor NUMERIC(10,2) NOT NULL,
 	forma VARCHAR(10) NOT NULL,
-	pagador VARCHAR(11) NOT NULL,
+	pagador INT NOT NULL,
 	status VARCHAR(10) NOT NULL,
 	data_pagamento DATE NOT NULL,
 
 	CONSTRAINT fk_pagador
-	FOREIGN KEY (pagador) REFERENCES pessoa(cpf)
+	FOREIGN KEY (pagador) REFERENCES pessoa(id)
 )
 
 CREATE TABLE IF NOT EXISTS motorista_fixo(
 	id SERIAL PRIMARY KEY,
-	cpf VARCHAR(11) NOT NULL,
-	cnh VARCHAR(11) NOT NULL,
+	pessoa_id INT UNIQUE NOT NULL,
+	pontos INT,
 
-	CONSTRAINT fk_cpf
-	FOREIGN KEY(cpf) REFERENCES pessoa(cpf),
-
-	CONSTRAINT fk_cnh
-	FOREIGN KEY(cnh) REFERENCES pessoa(cnh)
+	CONSTRAINT fk_motorista_pessoa
+	FOREIGN KEY(pessoa_id) REFERENCES pessoa(id)
 )
 
 CREATE TABLE IF NOT EXISTS funcionario(
 	id SERIAL PRIMARY KEY,
-	cpf VARCHAR(11) NOT NULL,
+	pessoa_id INT UNIQUE NOT NULL,
 	cargo VARCHAR(20) NOT NULL,
 	salario NUMERIC(10,2) NOT NULL,
 	data_contrato DATE NOT NULL,
 
-	CONSTRAINT fk_cpf
-	FOREIGN KEY (cpf) REFERENCES pessoa(cpf)
+	CONSTRAINT fk_funcionario_pessoa
+	FOREIGN KEY (pessoa_id) REFERENCES pessoa(id)
 )
 
 CREATE TABLE IF NOT EXISTS cliente(
 	id SERIAL PRIMARY KEY,
-	cnh VARCHAR(11) NOT NULL,
-	cpf VARCHAR(11) NOT NULL,
+	pessoa_id INT UNIQUE NOT NULL,
 	pontos INT,
 
-	CONSTRAINT fk_cnh
-	FOREIGN KEY(cnh) REFERENCES pessoa(cnh),
-
-	CONSTRAINT fk_cpf
-	FOREIGN KEY(cpf) REFERENCES pessoa(cpf)
+	CONSTRAINT fk_cliente_pessoa
+	FOREIGN KEY(pessoa_id) REFERENCES pessoa(id)
 )
 
 CREATE TABLE IF NOT EXISTS veiculo(
 	id SERIAL PRIMARY KEY,
 	placa VARCHAR(10) UNIQUE NOT NULL,
-	modelo_carro VARCHAR(20) NOT NULL,
+	modelo INT NOT NULL,
 	valor_diaria NUMERIC(6,2) NOT NULL,
 	valor_contrato NUMERIC(10,2),
 	garagem_id INT NOT NULL,
@@ -86,11 +79,14 @@ CREATE TABLE IF NOT EXISTS veiculo(
 	revisao DATE,
 	motorista_id INT NOT NULL,
 
-	CONSTRAINT fk_garagem
+	CONSTRAINT fk_veiculo_garagem
 	FOREIGN KEY (garagem_id) REFERENCES garagem(id),
 
-	CONSTRAINT fk_motorista
-	FOREIGN KEY (motorista_id) REFERENCES motorista_fixo(id)
+	CONSTRAINT fk_veiculo_motorista
+	FOREIGN KEY (motorista_id) REFERENCES motorista_fixo(id),
+
+	CONSTRAINT fk_veiculo_modelos
+	FOREIGN KEY (modelo) REFERENCES modelos(id)
 )
 
 CREATE TABLE IF NOT EXISTS contrato_fixo(
@@ -102,10 +98,10 @@ CREATE TABLE IF NOT EXISTS contrato_fixo(
 	motorista_id INT NOT NULL,
 	pagamento_id INT NOT NULL,
 
-	CONSTRAINT fk_motorista
+	CONSTRAINT fk_contrato_motorista
 	FOREIGN KEY (motorista_id) REFERENCES motorista_fixo(id),
 
-	CONSTRAINT fk_pagamento
+	CONSTRAINT fk_contrato_pagamento
 	FOREIGN KEY (pagamento_id) REFERENCES pagamento(id)
 )
 
@@ -119,10 +115,10 @@ CREATE TABLE IF NOT EXISTS pedido(
 	data_fim DATE NOT NULL,
 
 	
-	CONSTRAINT fk_funcionario FOREIGN KEY (funcionario_id) REFERENCES funcionario(id),
-	CONSTRAINT fk_cliente FOREIGN KEY (cliente_id) REFERENCES cliente(id),
-	CONSTRAINT fk_veiculo FOREIGN KEY (veiculo_id) REFERENCES veiculo(id),
-	CONSTRAINT fk_pagamento FOREIGN KEY (pagamento_id) REFERENCES pagamento(id)
+	CONSTRAINT fk_pedido_funcionario FOREIGN KEY (funcionario_id) REFERENCES funcionario(id),
+	CONSTRAINT fk_pedido_cliente FOREIGN KEY (cliente_id) REFERENCES cliente(id),
+	CONSTRAINT fk_pedido_veiculo FOREIGN KEY (veiculo_id) REFERENCES veiculo(id),
+	CONSTRAINT fk_pedido_pagamento FOREIGN KEY (pagamento_id) REFERENCES pagamento(id)
 )
 
 CREATE TABLE login(
@@ -131,5 +127,5 @@ CREATE TABLE login(
 	login VARCHAR(50) UNIQUE NOT NULL,
 	senha VARCHAR(200) NOT NULL,
 
-	CONSTRAINT fk_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id)
+	CONSTRAINT fk_login_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id)
 )
