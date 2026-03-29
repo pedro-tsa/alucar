@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS pessoa(
 	sobrenome VARCHAR(20) NOT NULL,
 	data_nascimento DATE NOT NULL,
 	telefone VARCHAR(20) NOT NULL,
-	email VARCHAR(20),
+	email VARCHAR(100),
 	data_cadastro DATE NOT NULL,
 	status VARCHAR(10) NOT NULL,
 	endereco VARCHAR(100),
