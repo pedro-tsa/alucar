@@ -1,0 +1,2 @@
+Implementação de sistema de Gamificação, aonde dá para clientes e motoristas diversas recompensas
+conforme o tanto de dinheiro que foi gasto com a empresa, além de boa reputação, gerada através de entregas sem multas, sinistros e avarias.
