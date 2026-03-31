@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS pessoa(
 	data_cadastro DATE NOT NULL,
 	status VARCHAR(10) NOT NULL,
 	endereco VARCHAR(100),
-	cnh VARCHAR(11) UNIQUE NOT NULL
+	cnh VARCHAR(11) UNIQUE NOT NULL,
+	pontos INT
 )
 
 CREATE TABLE IF NOT EXISTS garagem(
@@ -42,7 +43,6 @@ CREATE TABLE IF NOT EXISTS pagamento(
 CREATE TABLE IF NOT EXISTS motorista_fixo(
 	id SERIAL PRIMARY KEY,
 	pessoa_id INT UNIQUE NOT NULL,
-	pontos INT,
 
 	CONSTRAINT fk_motorista_pessoa
 	FOREIGN KEY(pessoa_id) REFERENCES pessoa(id)
@@ -62,7 +62,6 @@ CREATE TABLE IF NOT EXISTS funcionario(
 CREATE TABLE IF NOT EXISTS cliente(
 	id SERIAL PRIMARY KEY,
 	pessoa_id INT UNIQUE NOT NULL,
-	pontos INT,
 
 	CONSTRAINT fk_cliente_pessoa
 	FOREIGN KEY(pessoa_id) REFERENCES pessoa(id)
