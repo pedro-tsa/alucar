@@ -18,6 +18,7 @@ erDiagram
         string status
         string endereco
         string cnh
+        int pontuacao
     }
 
     GARAGEM {
@@ -47,7 +48,6 @@ erDiagram
     MOTORISTA_FIXO {
         int id PK
         int pessoa_id
-        int pontos
     }
 
     FUNCIONARIO {
@@ -61,7 +61,6 @@ erDiagram
     CLIENTE {
         int id PK
         int pessoa_id
-        int pontos
     }
 
     VEICULO {
